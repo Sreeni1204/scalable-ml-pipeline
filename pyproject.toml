@@ -19,6 +19,9 @@ dependencies = [
 packages = [{include = "scalable_ml_pipeline"}]
 version = "0.1.0-dev"
 
+[tool.poetry.scripts]
+scalable_ml_pipeline_cli = "scalable_ml_pipeline.model_trainer:main"
+
 [tool.poetry.group.dev.dependencies]
 pylint = ">=3.3.8"
 autopep8 = ">=2.3.2"
