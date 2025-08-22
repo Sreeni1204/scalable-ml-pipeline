@@ -1,0 +1,5 @@
+[core]
+    remote = census_data
+['remote "census_data"']
+    url = s3://sreeniudacitymlops/census_data/
+    region = eu-central-1
