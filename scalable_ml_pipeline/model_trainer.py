@@ -45,11 +45,6 @@ class ModelTrain():
             "native-country",
         ]
         self.label = "salary"
-        self.data_preprocessor = DataProcessor(
-            data_path=self.data_path,
-            categorical_features=self.categorical_features,
-            label=self.label,
-        )
         self.model_helper = ModelHelper()
     
 
@@ -59,7 +54,12 @@ class ModelTrain():
         """
         Function to perform model training.
         """
-        x_train, y_train, encoder, label_binarizer, x_test, y_test = self.data_preprocessor.process()
+        data_preprocessor = DataProcessor(
+            data_path=self.data_path,
+            categorical_features=self.categorical_features,
+            label=self.label,
+        )
+        x_train, y_train, encoder, label_binarizer, x_test, y_test = data_preprocessor.process()
 
         
         trained_model = self.model_helper.train_model(x_train, y_train)
@@ -81,7 +81,7 @@ class ModelTrain():
         print(f"Evaluation Metrics: Precision: {evaluate_model[0]}, Recall: {evaluate_model[1]}, F-beta Score: {evaluate_model[2]}")
     
 
-    def perform_slice_training(
+    def perform_slice_eval(
             self,
             slice_category: str
     ) -> None:
@@ -91,7 +91,20 @@ class ModelTrain():
         Args:
             slice_category (str): The category to slice the data for training.
         """
-        x_train, y_train, encoder, label_binarizer, x_test, y_test = self.data_preprocessor.process()
+        label_binarizer = os.path.join(self.model_path, "label_binarizer.pkl")
+        with open(label_binarizer, "rb") as label_binarizer_file:
+            label_binarizer = pickle.load(label_binarizer_file)
+        one_hot_encoder = os.path.join(self.model_path, "encoder.pkl")
+        with open(one_hot_encoder, "rb") as encoder_file:
+            one_hot_encoder = pickle.load(encoder_file)
+        data_preprocessor = DataProcessor(
+            data_path=self.data_path,
+            categorical_features=self.categorical_features,
+            label=self.label,
+            label_binarizer=label_binarizer,
+            one_hot_encoder=one_hot_encoder,
+        )
+        x_train, y_train, encoder, label_binarizer, x_test, y_test = data_preprocessor.process()
 
         model_file = os.path.join(self.model_path, f"trained_model.pkl")
         if os.path.exists(model_file):
@@ -161,6 +174,6 @@ def main():
     if args.action == "train":
         model_trainer.perform_model_training()
     elif args.action == "slice":
-        model_trainer.perform_slice_training(
+        model_trainer.perform_slice_eval(
             slice_category=args.slice_category,
         )
