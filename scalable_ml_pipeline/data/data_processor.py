@@ -19,6 +19,8 @@ class DataProcessor:
             data_path,
             categorical_features=[],
             label=None,
+            one_hot_encoder=None,
+            label_binarizer=None,
     ) -> None:
         """
         Initialize the DataProcessor with the path to the data, categorical features, and label.
@@ -26,12 +28,16 @@ class DataProcessor:
             data_path (str): Path to the data file (CSV or Parquet).
             categorical_features (list): List of categorical feature names.
             label (str): Name of the label column for supervised learning.
+            one_hot_encoder (OneHotEncoder): Optional pre-initialized OneHotEncoder.
+            label_binarizer (LabelBinarizer): Optional pre-initialized LabelBinar
         """
         self.data_path = data_path
         self.categorical_features = categorical_features
         self.label = label
-        self.label_binarizer = LabelBinarizer()
-        self.one_hot_encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+        self.label_binarizer = label_binarizer if label_binarizer is not None else LabelBinarizer()
+        self.one_hot_encoder = one_hot_encoder if one_hot_encoder is not None else OneHotEncoder(
+            sparse_output=False, handle_unknown='ignore'
+        )
 
     
     def load_data(
@@ -108,6 +114,21 @@ class DataProcessor:
         )
         
         return train, test
+    
+
+    def process_test_data(
+            self,
+            data,
+    ) -> tuple:
+        """
+        Process test data by applying the same preprocessing steps as training data.
+        Args:
+            data (pd.DataFrame): The test data to preprocess.
+        Returns:
+            tuple: Processed features (X) and labels (y).
+        """
+        x, y, _, _ = self.preprocess_data(data, train=False)
+        return x, y
     
 
     def process(
