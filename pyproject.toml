@@ -13,7 +13,8 @@ dependencies = [
     "scikit-learn (>=1.7.1)",
     "pandas (>=2.3.2)",
     "requests (>=2.32.5)",
-    "dvc (>=3.62.0)"
+    "dvc[google] (>=3.62.0,<4.0.0)",
+    "dvc-s3 (>=3.2.2,<4.0.0)"
 ]
 
 [tool.poetry]
