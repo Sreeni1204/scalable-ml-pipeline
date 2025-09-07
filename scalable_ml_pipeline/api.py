@@ -22,6 +22,12 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
 
 app = FastAPI()
 
+class AppConfig(BaseModel):
+    run_location: str = "render"  # Default to 'render', can be set to 'local' or other environments
+
+# Initialize app configuration
+config = AppConfig()
+
 @app.on_event("startup")
 async def startup_event():
     """
@@ -30,21 +36,32 @@ async def startup_event():
     """
     print("Starting up and loading model...")
     try:
-        pull_model_from_dvc()
-        print("Model pulled successfully from DVC remote.")
+        # Set model path based on run location
+        if config.run_location == "render":
+            pull_model_from_dvc()
+            model_path = "/opt/render/project/src/model"
+        else:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            model_path = os.path.join(current_dir, "../model")
+            model_path = os.path.abspath(model_path)
+
+        # Check if the model exists
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found at {model_path}")
+
+        # Set the model path as a global variable
+        global MODEL_PATH
+        MODEL_PATH = model_path
+
+        global MODEL, ENCODER, LABEL_BINARIZER
+        MODEL = pickle.load(open(os.path.join(MODEL_PATH, "trained_model.pkl"), "rb"))
+        ENCODER = pickle.load(open(os.path.join(MODEL_PATH, "encoder.pkl"), "rb"))
+        LABEL_BINARIZER = pickle.load(open(os.path.join(MODEL_PATH, "label_binarizer.pkl"), "rb"))
+
+        print(f"Model path set to: {MODEL_PATH}")
     except Exception as e:
         print(f"Failed to pull model from DVC remote: {e}")
 
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Construct the path to the model folder relative to the current file
-MODEL_DIR = os.path.join(current_dir, "../model")
-MODEL_DIR = os.path.abspath(MODEL_DIR)  # Ensure it's an absolute path
-
-MODEL = pickle.load(open(os.path.join(MODEL_DIR, "trained_model.pkl"), "rb"))
-ENCODER = pickle.load(open(os.path.join(MODEL_DIR, "encoder.pkl"), "rb"))
-LABEL_BINARIZER = pickle.load(open(os.path.join(MODEL_DIR, "label_binarizer.pkl"), "rb"))
 
 class InputData(BaseModel):
     # Using the random row of census.csv as sample
@@ -123,7 +140,6 @@ async def health_check():
     return {"status": "ok"}
 
 
-
 def main():
 
     parser = argparse.ArgumentParser("Scalable ML Pipeline on Census Data")
@@ -139,7 +155,16 @@ def main():
         default="8000",
         help="port for the sebservice 'default: 8000'"
     )
+    parser.add_argument(
+        "--run_location",
+        type=str,
+        default="render",
+        help="Run location for the application 'default: render', other option is 'local'"
+    )
     args = parser.parse_args()
+
+    # Update the config with the parsed arguments
+    config.run_location = args.run_location
 
     uvicorn.run(
         "scalable_ml_pipeline.api:app",
