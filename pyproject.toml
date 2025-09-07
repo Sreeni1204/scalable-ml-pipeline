@@ -23,6 +23,7 @@ version = "0.1.0-dev"
 
 [tool.poetry.scripts]
 scalable_ml_pipeline_cli = "scalable_ml_pipeline.model_trainer:main"
+scalable_ml_pipeline = "scalable_ml_pipeline.api:main"
 
 [tool.poetry.group.dev.dependencies]
 pylint = ">=3.3.8"
