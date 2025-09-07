@@ -158,13 +158,18 @@ async def health_check():
     return {"status": "ok"}
 
 
+@app.get("/")
+async def app_is_live():
+    return "This is to make sure, the app is running and live!"
+
+
 def main():
 
     parser = argparse.ArgumentParser("Scalable ML Pipeline on Census Data")
     parser.add_argument(
         "--host",
         type=str,
-        default="localhost",
+        default="0.0.0.0",
         help="Host for the webservice 'default: localhost'"
     )
     parser.add_argument(
@@ -184,8 +189,9 @@ def main():
     # Update the config with the parsed arguments
     config.run_location = args.run_location
 
+    port = int(os.getenv("PORT", args.port))
     uvicorn.run(
         "scalable_ml_pipeline.api:app",
         host=args.host,
-        port=args.port,
+        port=port,
     )
