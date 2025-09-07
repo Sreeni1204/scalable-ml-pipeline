@@ -46,7 +46,9 @@ jobs:
       run: poetry run pytest
 
     - name : Run linting
-      run: poetry run flake8 .
+      run: poetry run flake8 scalable_ml_pipeline
+      run: poetry run flake8 tests
+
 
 
   deploy:
