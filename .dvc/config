@@ -1,5 +1,8 @@
 [core]
-    remote = census_data
+    remote = models
 ['remote "census_data"']
     url = s3://sreeniudacitymlops/census_data/
+    region = eu-central-1
+['remote "models"']
+    url = s3://sreeniudacitymlops/models/
     region = eu-central-1

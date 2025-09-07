@@ -1,0 +1,5 @@
+outs:
+- md5: 44a65a4f87e6f736879c52710b78bfde
+  size: 359
+  hash: md5
+  path: label_binarizer.pkl
