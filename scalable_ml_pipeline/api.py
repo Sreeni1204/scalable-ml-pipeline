@@ -10,6 +10,7 @@ from typing import List, Optional
 
 from scalable_ml_pipeline.data.data_processor import DataProcessor
 from scalable_ml_pipeline.model_helper.model_helper import ModelHelper
+from scalable_ml_pipeline.model_helper.s3_utils import pull_model_from_dvc
 
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
@@ -20,6 +21,20 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
 
 
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Startup event to load the model and encoders.
+    Event pulls the model from DVC remote storage.
+    """
+    print("Starting up and loading model...")
+    try:
+        pull_model_from_dvc()
+        print("Model pulled successfully from DVC remote.")
+    except Exception as e:
+        print(f"Failed to pull model from DVC remote: {e}")
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
