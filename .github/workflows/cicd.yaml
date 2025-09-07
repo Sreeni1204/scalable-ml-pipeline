@@ -34,7 +34,7 @@ jobs:
         echo "AWS credentials configured."
 
     - name: Pull Data with DVC
-      run: dvc pull
+      run: poetry run dvc pull
 
     - name: Run tests
       run: poetry run pytest
