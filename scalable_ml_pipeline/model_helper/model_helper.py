@@ -23,7 +23,8 @@ class ModelHelper:
         Initializes the ModelHelper with a specified model.
         If no model is provided, a RandomForestClassifier is used by default.
         Attributes:
-            model: An instance of a machine learning model (default is RandomForestClassifier).
+            model: An instance of a machine learning model
+            (default is RandomForestClassifier).
         """
 
         self.model = model if model else RandomForestClassifier()
@@ -62,7 +63,8 @@ class ModelHelper:
             y_pred
     ) -> tuple:
         """
-        Evaluates the model's performance using precision, recall, and F-beta score.
+        Evaluates the model's performance using precision,
+        recall, and F-beta score.
         Args:
             y_true: True labels for the data.
             y_pred: Predicted labels by the model.

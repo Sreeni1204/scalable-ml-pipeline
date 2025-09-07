@@ -1,4 +1,12 @@
+# /usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+A utility module for interacting with S3 storage using DVC.
+Includes functions to pull model files from remote storage.
+"""
+
 import subprocess
+
 
 def pull_model_from_dvc():
     """

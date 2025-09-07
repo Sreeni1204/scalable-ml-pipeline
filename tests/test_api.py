@@ -9,11 +9,13 @@ asyncio.run(startup_event())
 
 client = TestClient(app)
 
+
 def test_health_check():
     """Test the health check endpoint."""
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
 
 def test_predict_valid_data():
     """Test the predict endpoint with valid data."""
@@ -40,11 +42,13 @@ def test_predict_valid_data():
     assert "predicted_salary" in response.json()
     assert isinstance(response.json()["predicted_salary"], list)
 
+
 def test_predict_invalid_data():
     """Test the predict endpoint with invalid data."""
     payload = "invalid_data"  # Invalid format
     response = client.post("/predict", json=payload)
     assert response.status_code == 422  # Unprocessable Entity
+
 
 def test_predict_empty_data():
     """Test the predict endpoint with empty data."""
@@ -53,16 +57,19 @@ def test_predict_empty_data():
     assert response.status_code == 400  # Bad Request
     assert response.json() == {"detail": "Input data is empty."}
 
+
 def test_predict_missing_data_key():
     """Test the predict endpoint with missing 'data' key."""
     payload = {}
     response = client.post("/predict", json=payload)
     assert response.status_code == 422  # Unprocessable Entity
 
+
 def test_invalid_endpoint():
     """Test an invalid endpoint."""
     response = client.get("/invalid_endpoint")
     assert response.status_code == 404  # Not Found
+
 
 def test_run_location_config():
     """Test the run_location configuration."""

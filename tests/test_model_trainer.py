@@ -1,6 +1,6 @@
 import os
 import pytest
-from sklearn.ensemble import RandomForestClassifier
+
 from scalable_ml_pipeline.model_trainer import ModelTrain
 
 
@@ -15,9 +15,15 @@ def model_trainer():
 def test_perform_model_training(model_trainer):
     model_trainer.perform_model_training()
     # Check if model files are created
-    assert os.path.exists(os.path.join(model_trainer.model_path, "trained_model.pkl"))
-    assert os.path.exists(os.path.join(model_trainer.model_path, "encoder.pkl"))
-    assert os.path.exists(os.path.join(model_trainer.model_path, "label_binarizer.pkl"))
+    assert os.path.exists(
+        os.path.join(model_trainer.model_path, "trained_model.pkl")
+    )
+    assert os.path.exists(
+        os.path.join(model_trainer.model_path, "encoder.pkl")
+    )
+    assert os.path.exists(
+        os.path.join(model_trainer.model_path, "label_binarizer.pkl")
+    )
 
 
 def test_invalid_data_path():

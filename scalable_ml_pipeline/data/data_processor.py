@@ -1,7 +1,8 @@
 # /usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-A module for processing data for machine learning tasks, including loading, preprocessing, and splitting datasets.
+A module for processing data for machine learning tasks,
+including loading, preprocessing, and splitting datasets.
 """
 
 import numpy as np
@@ -12,51 +13,50 @@ from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
 class DataProcessor:
     """
-    A class to handle data loading, preprocessing, and splitting for machine learning tasks.
+    A class to handle data loading, preprocessing,
+    and splitting for machine learning tasks.
     """
+
     def __init__(
-            self,
-            data_path,
-            categorical_features=[],
-            label=None,
-            one_hot_encoder=None,
-            label_binarizer=None,
+        self,
+        data_path: str,
+        categorical_features: list[str] = None,
+        label: str = None,
+        one_hot_encoder: OneHotEncoder = None,
+        label_binarizer: LabelBinarizer = None,
     ) -> None:
         """
-        Initialize the DataProcessor with the path to the data, categorical features, and label.
+        Initialize the DataProcessor with the path to
+        the data, categorical features, and label.
         Attributes:
-            data_path (str): Path to the data file (CSV or Parquet).
-            categorical_features (list): List of categorical feature names.
-            label (str): Name of the label column for supervised learning.
-            one_hot_encoder (OneHotEncoder): Optional pre-initialized OneHotEncoder.
-            label_binarizer (LabelBinarizer): Optional pre-initialized LabelBinar
+            data_path: Path to the data file (CSV or Parquet).
+            categorical_features: List of categorical feature names.
+            label: Name of the label column for supervised learning.
+            one_hot_encoder: Optional pre-initialized OneHotEncoder.
+            label_binarizer: Optional pre-initialized LabelBinarizer.
         """
         self.data_path = data_path
-        self.categorical_features = categorical_features
+        self.categorical_features = categorical_features or []
         self.label = label
-        self.label_binarizer = label_binarizer if label_binarizer is not None else LabelBinarizer()
-        self.one_hot_encoder = one_hot_encoder if one_hot_encoder is not None else OneHotEncoder(
-            sparse_output=False, handle_unknown='ignore'
+        self.label_binarizer = label_binarizer or LabelBinarizer()
+        self.one_hot_encoder = one_hot_encoder or OneHotEncoder(
+            sparse_output=False, handle_unknown="ignore"
         )
 
-    
-    def load_data(
-            self
-    ) -> pd.DataFrame:
+    def load_data(self) -> pd.DataFrame:
         """
         Load data from the specified path.
         """
-        if self.data_path.endswith('.csv'):
+        if self.data_path.endswith(".csv"):
             return pd.read_csv(self.data_path)
-        elif self.data_path.endswith('.parquet'):
+        if self.data_path.endswith(".parquet"):
             return pd.read_parquet(self.data_path)
-        else:
-            raise ValueError("Unsupported file format. Use CSV or Parquet.")
-        
+        raise ValueError("Unsupported file format. Use CSV or Parquet.")
+
     def preprocess_data(
             self,
-            data,
-            train=True
+            data: pd.DataFrame,
+            train: bool = True
     ) -> tuple:
         """
         Preprocess the data by handling categorical features and labels.
@@ -64,51 +64,63 @@ class DataProcessor:
             data (pd.DataFrame): The data to preprocess.
             train (bool): Whether the data is for training or testing.
         Returns:
-            tuple: Processed features (X), labels (y), one-hot encoder, and label binarizer.
+            tuple: Processed features (X),
+                   labels (y),
+                   one-hot encoder,
+                   label binarizer.
         """
-
-        if self.label is not None:
+        if self.label:
             y = data[self.label]
             x = data.drop(columns=[self.label], axis=1)
         else:
             y = np.array([])
             x = data
-        
+
         x_categorical = x[self.categorical_features].values
         x_continuous = x.drop(columns=self.categorical_features, axis=1)
 
         if train:
-            x_categorical_encoded = self.one_hot_encoder.fit_transform(x_categorical)
-            y_binarized = self.label_binarizer.fit_transform(y.values).ravel()
+            x_categorical_encoded = self.one_hot_encoder.fit_transform(
+                x_categorical
+            )
+            y_binarized = self.label_binarizer.fit_transform(
+                y.values
+            ).ravel()
         else:
-            x_categorical_encoded = self.one_hot_encoder.transform(x_categorical)
-    
-            if self.label is not None and len(y) > 0:
+            x_categorical_encoded = self.one_hot_encoder.transform(
+                x_categorical
+            )
+
+            if self.label and len(y) > 0:
                 try:
-                    y_binarized = self.label_binarizer.transform(y.values).ravel()
-                except Exception as e:
+                    y_binarized = self.label_binarizer.transform(
+                        y.values
+                    ).ravel()
+                except ValueError as e:
                     raise ValueError(f"Error transforming labels: {e}")
             else:
                 y_binarized = np.array([])  # No labels available
 
         x = np.concatenate(
             [x_continuous.values, x_categorical_encoded], axis=1
-        )     
-        
-        return x, y_binarized, self.one_hot_encoder, self.label_binarizer
-    
+        )
+
+        return (
+            x, y_binarized, self.one_hot_encoder, self.label_binarizer
+        )
 
     def split_data(
-            self,
-            data,
-            test_size=0.2,
-            random_state=42
+        self,
+        data: pd.DataFrame,
+        test_size: float = 0.2,
+        random_state: int = 42,
     ) -> tuple:
         """
         Split the data into training and testing sets.
         Args:
             data (pd.DataFrame): The data to split.
-            test_size (float): Proportion of the dataset to include in the test split.
+            test_size (float): Proportion of the dataset to
+                               include in the test split.
             random_state (int): Random seed for reproducibility.
         Returns:
             tuple: Training and testing data as DataFrames.
@@ -116,16 +128,15 @@ class DataProcessor:
         train, test = train_test_split(
             data, test_size=test_size, random_state=random_state
         )
-        
         return train, test
-    
 
     def process_test_data(
-            self,
-            data,
+        self,
+        data: pd.DataFrame,
     ) -> tuple:
         """
-        Process test data by applying the same preprocessing steps as training data.
+        Process test data by applying the same preprocessing
+        steps as training data.
         Args:
             data (pd.DataFrame): The test data to preprocess.
         Returns:
@@ -133,21 +144,22 @@ class DataProcessor:
         """
         x, y, _, _ = self.preprocess_data(data, train=False)
         return x, y
-    
 
-    def process(
-            self
-    ) -> tuple:
+    def process(self) -> tuple:
         """
         Main method to process the data.
-        Loads the data, splits it into training and testing sets, and preprocesses it.
+        Loads the data, splits it into training and testing sets,
+        and preprocesses it.
         Returns:
-            tuple: Processed training and testing features (X) and labels (y).
+            tuple: Processed training and testing features (X)
+                   and labels (y).
         """
         data = self.load_data()
         train, test = self.split_data(data)
-        
-        x_train, y_train, encoder, label_binarizer = self.preprocess_data(train, train=True)
+
+        x_train, y_train, encoder, label_binarizer = self.preprocess_data(
+            train, train=True
+        )
         x_test, y_test, _, _ = self.preprocess_data(test, train=False)
-        
+
         return x_train, y_train, encoder, label_binarizer, x_test, y_test

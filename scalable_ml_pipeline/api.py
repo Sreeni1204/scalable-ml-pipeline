@@ -1,3 +1,10 @@
+# /usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+A FastAPI application for serving a machine learning model.
+Includes endpoints for health checks and predictions.
+"""
+
 import argparse
 import os
 import pickle
@@ -6,7 +13,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import uvicorn
-from typing import List, Optional
+from typing import List
 
 from scalable_ml_pipeline.data.data_processor import DataProcessor
 from scalable_ml_pipeline.model_helper.model_helper import ModelHelper
@@ -22,11 +29,14 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
 
 app = FastAPI()
 
+
 class AppConfig(BaseModel):
-    run_location: str = "render"  # Default to 'render', can be set to 'local' or other environments
+    run_location: str = "render"  # Default to 'render', can be set to 'local'
+
 
 # Initialize app configuration
 config = AppConfig()
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -54,9 +64,15 @@ async def startup_event():
         MODEL_PATH = model_path
 
         global MODEL, ENCODER, LABEL_BINARIZER
-        MODEL = pickle.load(open(os.path.join(MODEL_PATH, "trained_model.pkl"), "rb"))
-        ENCODER = pickle.load(open(os.path.join(MODEL_PATH, "encoder.pkl"), "rb"))
-        LABEL_BINARIZER = pickle.load(open(os.path.join(MODEL_PATH, "label_binarizer.pkl"), "rb"))
+        MODEL = pickle.load(
+            open(os.path.join(MODEL_PATH, "trained_model.pkl"), "rb")
+        )
+        ENCODER = pickle.load(
+            open(os.path.join(MODEL_PATH, "encoder.pkl"), "rb")
+        )
+        LABEL_BINARIZER = pickle.load(
+            open(os.path.join(MODEL_PATH, "label_binarizer.pkl"), "rb")
+        )
 
         print(f"Model path set to: {MODEL_PATH}")
     except Exception as e:
@@ -91,13 +107,13 @@ async def predict(input_data: List[InputData]):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Input data is empty."
         )
-    
+
     if MODEL is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Model not loaded"
         )
-    
+
     input_df = pd.DataFrame([data.dict() for data in input_data])
     categorical_features = [
         "workclass",
@@ -122,7 +138,9 @@ async def predict(input_data: List[InputData]):
     model_helper = ModelHelper(model=MODEL)
     predictions = model_helper.model_inference(processed_data[0])
 
-    predicted_salary = ['<=50k' if pred == 0 else '>50k' for pred in predictions]
+    predicted_salary = [
+        '<=50k' if pred == 0 else '>50k' for pred in predictions
+    ]
 
     return JSONResponse(
         content={
@@ -159,7 +177,7 @@ def main():
         "--run_location",
         type=str,
         default="render",
-        help="Run location for the application 'default: render', other option is 'local'"
+        help="Run location for the application 'options: render' or 'local'"
     )
     args = parser.parse_args()
 
