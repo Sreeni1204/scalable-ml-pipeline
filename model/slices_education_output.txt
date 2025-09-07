@@ -1,0 +1,65 @@
+Slice Category: education
+Slice: Bachelors
+Number of samples: 4307
+Evaluation Metrics for Bachelors: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: HS-grad
+Number of samples: 8436
+Evaluation Metrics for HS-grad: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 11th
+Number of samples: 945
+Evaluation Metrics for 11th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Masters
+Number of samples: 1360
+Evaluation Metrics for Masters: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 9th
+Number of samples: 414
+Evaluation Metrics for 9th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Some-college
+Number of samples: 5827
+Evaluation Metrics for Some-college: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Assoc-acdm
+Number of samples: 845
+Evaluation Metrics for Assoc-acdm: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Assoc-voc
+Number of samples: 1101
+Evaluation Metrics for Assoc-voc: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 7th-8th
+Number of samples: 517
+Evaluation Metrics for 7th-8th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Doctorate
+Number of samples: 333
+Evaluation Metrics for Doctorate: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Prof-school
+Number of samples: 449
+Evaluation Metrics for Prof-school: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 5th-6th
+Number of samples: 255
+Evaluation Metrics for 5th-6th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 10th
+Number of samples: 756
+Evaluation Metrics for 10th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 1st-4th
+Number of samples: 122
+Evaluation Metrics for 1st-4th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: Preschool
+Number of samples: 41
+Evaluation Metrics for Preschool: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
+Slice: 12th
+Number of samples: 340
+Evaluation Metrics for 12th: Precision: 1.0, Recall: 1.0, F-beta Score: 1.0
+--------------------------------------------------
