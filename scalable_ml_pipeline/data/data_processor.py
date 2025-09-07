@@ -82,10 +82,14 @@ class DataProcessor:
             y_binarized = self.label_binarizer.fit_transform(y.values).ravel()
         else:
             x_categorical_encoded = self.one_hot_encoder.transform(x_categorical)
-            try:
-                y_binarized = self.label_binarizer.transform(y.values).ravel()
-            except AttributeError:
-                pass
+    
+            if self.label is not None and len(y) > 0:
+                try:
+                    y_binarized = self.label_binarizer.transform(y.values).ravel()
+                except Exception as e:
+                    raise ValueError(f"Error transforming labels: {e}")
+            else:
+                y_binarized = np.array([])  # No labels available
 
         x = np.concatenate(
             [x_continuous.values, x_categorical_encoded], axis=1
