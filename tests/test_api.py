@@ -1,5 +1,11 @@
+import asyncio
 from fastapi.testclient import TestClient
-from scalable_ml_pipeline.api import app
+from scalable_ml_pipeline.api import app, config, startup_event
+
+# Set the configuration value for tests
+config.run_location = "local"
+
+asyncio.run(startup_event())
 
 client = TestClient(app)
 
@@ -57,3 +63,7 @@ def test_invalid_endpoint():
     """Test an invalid endpoint."""
     response = client.get("/invalid_endpoint")
     assert response.status_code == 404  # Not Found
+
+def test_run_location_config():
+    """Test the run_location configuration."""
+    assert config.run_location == "local"
