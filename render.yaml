@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: scalable-ml-pipeline
+    env: python
+    buildCommand: |
+      poetry install
+    startCommand: |
+      scalable_ml_pipeline
+    plan: free
+    branch: main
+    envVars:
+      - key: AWS_ACCESS_KEY_ID
+        fromSecret: AWS_ACCESS_KEY_ID
+      - key: AWS_SECRET_ACCESS_KEY
+        fromSecret: AWS_SECRET_ACCESS_KEY
+      - key: AWS_REGION
+        value: eu-central-1
+      - key: S3_BUCKET_NAME
+        value: sreeniudacitymlops/models/
+      - key: MODEL_PATH
+        value: models
+      - key: PYTHON_VERSION
+        value: "3.10"
