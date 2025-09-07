@@ -36,9 +36,9 @@ async def startup_event():
     """
     print("Starting up and loading model...")
     try:
+        pull_model_from_dvc()
         # Set model path based on run location
         if config.run_location == "render":
-            pull_model_from_dvc()
             model_path = "/opt/render/project/src/model"
         else:
             current_dir = os.path.dirname(os.path.abspath(__file__))
