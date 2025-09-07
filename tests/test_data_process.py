@@ -10,7 +10,7 @@ from scalable_ml_pipeline.data.data_processor import DataProcessor
 
 current_dir = os.path.dirname(__file__)
 FILE_PATH = os.path.dirname(current_dir)
-ENCODER = pickle.load(open(os.path.join(FILE_PATH, "/model/encoder.pkl"), "rb"))
+ENCODER = pickle.load(open(os.path.join(FILE_PATH, "model/encoder.pkl"), "rb"))
 LABEL_BINARIZER = pickle.load(open(os.path.join(FILE_PATH, "model/label_binarizer.pkl"), "rb"))
 TEST_DATA_PATH = "tests/test_data/census.csv"
 
