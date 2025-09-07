@@ -30,6 +30,7 @@ pylint = ">=3.3.8"
 autopep8 = ">=2.3.2"
 pytest-cov = ">=5.0.0"
 httpx = "^0.28.1"
+flake8 = "^7.3.0"
 
 [tool.poetry.requires-plugins]
 poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
