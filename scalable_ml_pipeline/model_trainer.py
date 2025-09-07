@@ -91,11 +91,11 @@ class ModelTrain():
         Args:
             slice_category (str): The category to slice the data for training.
         """
-        label_binarizer = os.path.join(self.model_path, "label_binarizer.pkl")
-        with open(label_binarizer, "rb") as label_binarizer_file:
+        label_binarizer_path = os.path.join(self.model_path, "label_binarizer.pkl")
+        with open(label_binarizer_path, "rb") as label_binarizer_file:
             label_binarizer = pickle.load(label_binarizer_file)
-        one_hot_encoder = os.path.join(self.model_path, "encoder.pkl")
-        with open(one_hot_encoder, "rb") as encoder_file:
+        one_hot_encoder_path = os.path.join(self.model_path, "encoder.pkl")
+        with open(one_hot_encoder_path, "rb") as encoder_file:
             one_hot_encoder = pickle.load(encoder_file)
         data_preprocessor = DataProcessor(
             data_path=self.data_path,
@@ -106,34 +106,34 @@ class ModelTrain():
         )
         x_train, y_train, encoder, label_binarizer, x_test, y_test = data_preprocessor.process()
 
-        model_file = os.path.join(self.model_path, f"trained_model.pkl")
-        if os.path.exists(model_file):
-            with open(model_file, "rb") as model_file:
+        model_file_path = os.path.join(self.model_path, f"trained_model.pkl")
+        if os.path.exists(model_file_path):
+            with open(model_file_path, "rb") as model_file:
                 trained_model = pickle.load(model_file)
         else:
             print(f"No pre-trained model found at {model_file}. Training a new model.")
             trained_model = None
         
-        predictions = self.model_helper.model_inference(trained_model, x_test)
+        model_helper = ModelHelper(model=trained_model)
 
-        data = self.data_preprocessor.get_data()
+        data = data_preprocessor.load_data().reset_index(drop=True)
 
-        standard_output = sys.stdout
         slices_output_file = os.path.join(self.model_path, f"slices_{slice_category}_output.txt")
 
         with open(slices_output_file, "w") as slices_output:
-            sys.stdout = slices_output
-            print(f"Slice Category: {slice_category}")
+            slices_output.write(f"Slice Category: {slice_category}\n")
             for value in data[slice_category].unique():
-                index = data.index[data[slice_category] == value]
+                slice_indices = data[data[slice_category] == value].index.to_list()
+                slice_indices = [i for i in slice_indices if i < len(y_train)]
 
+                slices_output.write(f"Slice: {value}\n")
                 print(f"Slice: {value}")
-                print(f"Number of samples: {len(index)}")
-                predictions_slice = self.model_helper.evaluate_model(y_test[index], predictions[index])
+                slices_output.write(f"Number of samples: {len(slice_indices)}\n")
+                print(f"Number of samples: {len(slice_indices)}")
+                predictions_slice = model_helper.evaluate_model(y_train[slice_indices], model_helper.model_inference(x_train[slice_indices]))
                 print(f"Evaluation Metrics for {value}: Precision: {predictions_slice[0]}, Recall: {predictions_slice[1]}, F-beta Score: {predictions_slice[2]}")
-                print("-" * 50)
-
-        sys.stdout = standard_output
+                slices_output.write(f"Evaluation Metrics for {value}: Precision: {predictions_slice[0]}, Recall: {predictions_slice[1]}, F-beta Score: {predictions_slice[2]}\n")
+                slices_output.write("-" * 50 + "\n")
 
 
 def main():
@@ -150,7 +150,6 @@ def main():
     parser.add_argument(
         "data_path",
         type=str,
-        required=True,
         help="Path to the data csv file.",
     )
     parser.add_argument(
