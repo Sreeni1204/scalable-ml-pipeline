@@ -75,5 +75,11 @@ scalable-ml-pipeline/
 ├── dvc.yaml            # DVC pipeline configuration
 ```
 
+## Live App
+
+The live app is accessible under `https://scalable-ml-pipeline.onrender.com/`.
+
+You can perform post request to the above mentioned live app as shown in `post_request.py`.
+
 ## License
 This project is licensed under the MIT License.
